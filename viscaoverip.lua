@@ -122,32 +122,5 @@ function viscaip_proto.dissector(buffer, pinfo, tree)
 
 	pinfo.cols.info = info_str
 
-
-
-
-	-- -- ID
-	-- id = buffer(1, 1)
-	-- subtree:add(id, string.format("ID:\t0x%02x", id:uint()))
-
-	-- -- Int24 Fields
-	-- info_str = add_int24_field("Pan", subtree, buffer(2, 3))
- --    info_str = info_str .. "\t" ..add_int24_field("Tilt", subtree, buffer(5, 3))
- --    info_str = info_str .. "\t" ..add_int24_field("Roll", subtree, buffer(8, 3))
- --    info_str = info_str .. "\t" ..add_int24_field("X", subtree, buffer(11, 3))
- --    info_str = info_str .. "\t" ..add_int24_field("Y", subtree, buffer(14, 3))
- --    info_str = info_str .. "\t" ..add_int24_field("Z", subtree, buffer(17, 3))
- --    info_str = info_str .. "\t" ..add_int24_field("Zoom", subtree, buffer(20, 3))
- --    info_str = info_str .. "\t" ..add_int24_field("Focus", subtree, buffer(23, 3))
-
- --    -- Spare
- --    spare = buffer(26, 2)
- --    subtree:add(spare, string.format("Spare:\t0x%04x", spare:uint()))
-
- --    checksum = buffer(28, 1)
- --    subtree:add(checksum, string.format("Checksum:\t0x%02x", checksum:uint()))
-
-	-- --info_str = string.format("VizRT - Pan %d\tTilt %d\tRoll %d", pan, tilt, roll)
-	pinfo.cols.info = info_str
-
 end
 udp_table:add(52381, viscaip_proto)
