@@ -38,6 +38,23 @@ category_table = {
 	[category_pan_tilt] = "Pan/Tilt"
 }
 
+error_table = {
+	[0x01] = "Message Length Error",
+	[0x02] = "Syntax Error",
+	[0x03] = "Command Buffer Full",
+	[0x04] = "Command canceled",
+	[0x05] = "No Socket",
+	[0x41] = "Command Not Executable"  
+}
+
+command_table = {
+	[0x02] = "Absolute Position",
+	[0x0C] = "Gain",
+	[0x47] = "Zoom",
+	[0x48] = "Focus",
+	[0x39] = "Auto Exposure"
+}
+
 function viscaip_proto.dissector(buffer, pinfo, tree)
 	subtree = tree:add(viscaip_proto, buffer(), "ViscaIP")
 	pinfo.cols.protocol = "ViscaIP"
@@ -96,6 +113,14 @@ function viscaip_proto.dissector(buffer, pinfo, tree)
 			-- command
 			tree = tree:add(payload_buffer, "Command")
 			tree:add(category_buffer, string.format("Category: %s", category_table[category]))
+
+			command_buffer = buffer(11, 1)
+			command_value = command_buffer:uint()
+			command_value_str = command_table[command_value]
+			tree:add(command_buffer, command_value_str)
+
+			info_str = info_str .. " " .. command_value_str
+
 		else
 			tree = tree:add(payload_buffer, "Inquiry")
 		end
@@ -113,10 +138,16 @@ function viscaip_proto.dissector(buffer, pinfo, tree)
 		elseif (bit.band(msg_type, 0xF0) == 0x60) then
 			-- error
 			tree = tree:add(msg_type_buffer, "Error")
-			info_str = info_str .. " Error"
-			socket_buffer = buffer(10, 1)
+			socket_buffer = buffer(9, 1)
 			socket = bit.band(socket_buffer:uint(), 0x0F)
 		 	tree:add(socket_buffer, string.format("Socket: %d", socket))	
+
+		 	error_buffer = buffer(10, 1)
+		 	error_type = error_buffer:uint()
+		 	error_type_str = error_table[error_type]
+		 	tree:add(error_buffer, error_type_str)
+		 	info_str = info_str .. " " .. error_type_str
+
 		end
 	end
 
