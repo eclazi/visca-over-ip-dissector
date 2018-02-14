@@ -52,7 +52,10 @@ command_table = {
 	[0x0C] = "Gain",
 	[0x47] = "Zoom",
 	[0x48] = "Focus",
-	[0x39] = "Auto Exposure"
+	[0x39] = "Auto Exposure",
+	[0x4B] = "Iris Absolute",
+	[0x4A] = "Shutter Absolute",
+	[0x4C] = "Gain Absolute"
 }
 
 function viscaip_proto.dissector(buffer, pinfo, tree)
@@ -117,6 +120,10 @@ function viscaip_proto.dissector(buffer, pinfo, tree)
 			command_buffer = buffer(11, 1)
 			command_value = command_buffer:uint()
 			command_value_str = command_table[command_value]
+			if command_value_str == nil then
+				command_value_str = "Unknown command"
+			end
+
 			tree:add(command_buffer, command_value_str)
 
 			info_str = info_str .. " " .. command_value_str
