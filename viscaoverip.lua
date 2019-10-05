@@ -20,7 +20,7 @@ payload_type_table = {
 
 control_command_reset = 0x01
 control_command_error_seq_number = 0x0F01
-control_command_error_message = 0x0F01
+control_command_error_message = 0x0F02
 
 control_command_table = {
 	[control_command_reset] = "RESET",
@@ -44,7 +44,7 @@ error_table = {
 	[0x03] = "Command Buffer Full",
 	[0x04] = "Command canceled",
 	[0x05] = "No Socket",
-	[0x41] = "Command Not Executable"  
+	[0x41] = "Command Not Executable"
 }
 
 command_table = {
@@ -68,7 +68,7 @@ function viscaip_proto.dissector(buffer, pinfo, tree)
 	payload_type = payload_type_buffer:uint()
 	payload_type_str = payload_type_table[payload_type]
 
-	subtree:add(payload_type_buffer, string.format("%s:\t0x%02x", 
+	subtree:add(payload_type_buffer, string.format("%s:\t0x%02x",
 		payload_type_str, payload_type))
 
 	info_str = payload_type_str
@@ -101,8 +101,8 @@ function viscaip_proto.dissector(buffer, pinfo, tree)
 		return
 	end
 
-    payload_buffer = buffer(8, payload_length)
-	
+	payload_buffer = buffer(8, payload_length)
+
 	packet_type_buffer = buffer(8,1)
 	packet_type = packet_type_buffer:uint()
 	if (bit.band(packet_type, 0xF0) == 0x80) then
@@ -147,7 +147,7 @@ function viscaip_proto.dissector(buffer, pinfo, tree)
 			tree = tree:add(msg_type_buffer, "Error")
 			socket_buffer = buffer(9, 1)
 			socket = bit.band(socket_buffer:uint(), 0x0F)
-		 	tree:add(socket_buffer, string.format("Socket: %d", socket))	
+		 	tree:add(socket_buffer, string.format("Socket: %d", socket))
 
 		 	error_buffer = buffer(10, 1)
 		 	error_type = error_buffer:uint()
